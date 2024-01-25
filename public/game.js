@@ -9,7 +9,7 @@ const scoreIncrement = 0.2;
 let gameInterval;
 let score = 0;
 let playerVel;
-let startPos = 400;
+let startPos = screenHeight / 3;
 let curPos = startPos;
 let startOffset = 50;
 let canJump = false;
