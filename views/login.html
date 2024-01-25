@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="login.css" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.3/socket.io.js"></script>
+    <script async defer src="login.js"></script>
+    <title>Game Login</title>
+</head>
+<body>
+    <div id="grid-container">
+        <h1>Game Directory Login</h1>
+        <h2 id="login-title">Login</h2>
+        <form id="login-form" action="login" method="post">
+            <input type="text" name="username" class="username-input" placeholder="Username - 'Oscar Buhster'" required>
+            <input type="password" name="password" class="password-input" placeholder="Password" required>
+            <button type="submit" id="submit-login">Login</button>
+        </form>
+        <h2 id="register-title">Register</h2>
+        <form id="register-form" action="register" method="post">
+            <input type="text" name="username" class="username-input" placeholder="Username - 'Oscar Buhster'" required>
+            <input type="password" name="password" class="password-input" placeholder="Password" required>
+            <button type="submit" id="submit-login">Register</button>
+        </form>
+    </div>
+</body>
+</html>
