@@ -1,8 +1,36 @@
 * {
     box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+#game-screen {
+    background-color: #213543;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
 }
 
 .platform {
     position: absolute;
     background: red;
+}
+
+#player {
+    width: 45px;
+    height: 120px;
+    background-color: beige;
+    position: absolute;
+}
+
+#stat-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100vw;
+    text-align: center;
+    color: beige;
 }
