@@ -1,3 +1,5 @@
+let socket = io('http://localhost:3000');
+let user = window.location.search.split('?')[1]?.split('username=')[1] || null
 let screenWidth = window.innerWidth;
 let screenHeight = window.innerHeight;
 const platformSpeed = 5;
@@ -8,6 +10,7 @@ const playerHeight = 120;
 const scoreIncrement = 0.2;
 let gameInterval;
 let score = 0;
+let topScore = 0;
 let playerVel;
 let startPos = screenHeight / 3;
 let curPos = startPos;
@@ -16,6 +19,7 @@ let canJump = false;
 let platforms = document.querySelectorAll('.platform')
 let player = document.getElementById('player');
 let scoreEl = document.getElementById('score');
+let topScoreEl = document.getElementById('top-score');
 // console.log(screenHeight)
 addEventListener('resize', () => {
     screenWidth = window.innerWidth;
@@ -153,7 +157,31 @@ function updateStats() {
 
 function checkGameOver() {
     if(curPos > screenHeight) {
-        console.log('game over!');
-        clearInterval(gameInterval);
+        handleGameOver();
     }
 }
+
+function handleGameOver() {
+    console.log('game over!');
+    clearInterval(gameInterval);
+    if(score > topScore) {
+        topScore = score;
+        topScoreEl.innerHTML = Math.floor(topScore);
+        socket.emit('update top score', {
+            username: user,
+            topScore: topScore
+        })
+
+    }
+}
+
+// IO BULLSHIT
+socket.on('top score data', ({topScore, username}) => {
+    console.log('we here cuh')
+    if(username == user) {
+        console.log('username matches')
+        topScoreEl.innerHTML = score;
+        topScore = score;
+    }
+    
+}) 

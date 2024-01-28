@@ -1,6 +1,6 @@
 const passport = require('passport');
 const bcrypt = require('bcrypt');
-module.exports = (app, userDataBase) => {
+module.exports = (app, userDataBase, io) => {
     function ensureAuthenticated(req, res, next) {
         if(req.isAuthenticated()) return next();
         res.redirect('/');
@@ -12,12 +12,36 @@ module.exports = (app, userDataBase) => {
     })
 
     app.route('/game-directory')
-    .get((req, res) => {
+    .get(ensureAuthenticated, (req, res) => {
         res.sendFile(process.cwd() + '/views/index.html')
     })
 
     app.route('/platformer')
-    .get((req, res) => {
+    .get(ensureAuthenticated, (req, res) => {
+        // we first want to check if user has data in this game already
+        let username = req.user.username;
+        let password = req.user.password;
+        console.log('server side buh')
+        userDataBase.findOne({username: username, password: password}).then(user => {
+            if(user.platformer) {
+                console.log('should be here')
+                io.emit('top score data', {topScore: user.platformer.topScore, username: username})
+            } else {
+                // create section in user database for platformer data
+                userDataBase.updateOne({username: username, password: password}, {$set: {
+                    platformer: {
+                        topScore: 0
+                    }
+                }}).then(data => {
+                    console.log('added platformer section to ' + username);
+                    io.emit('top score data', {topScore: 0, username: username})
+                }).catch(err => {
+                    console.error(err);
+                })
+            }
+        }).catch(err => {
+            console.error(err);
+        })
         res.sendFile(process.cwd() + '/views/game.html')
     })
 
@@ -27,7 +51,7 @@ module.exports = (app, userDataBase) => {
     app.route('/login')
     .post(passport.authenticate('local', {failureRedirect: '/'}), (req, res) => {
         console.log(`${req.body.username} has logged in`);
-        res.redirect('/game-directory');
+        res.redirect('/game-directory?username=' + req.body.username);
     })
 
     app.route('/register')
@@ -57,7 +81,7 @@ module.exports = (app, userDataBase) => {
     passport.authenticate('local', {failureRedirect: '/'}),
     (req, res) => {
         console.log('registered & authenticated');
-        res.redirect('/game-directory');
+        res.redirect('/game-directory?username=' + req.body.username);
     })
 
 
