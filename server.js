@@ -68,7 +68,6 @@ io.on('connection', socket => {
     })
 
 })
-
 routes(app, userDataBase, io);
 auth(userDataBase);
 

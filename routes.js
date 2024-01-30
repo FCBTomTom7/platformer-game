@@ -21,10 +21,8 @@ module.exports = (app, userDataBase, io) => {
         // we first want to check if user has data in this game already
         let username = req.user.username;
         let password = req.user.password;
-        console.log('server side buh')
         userDataBase.findOne({username: username, password: password}).then(user => {
             if(user.platformer) {
-                console.log('should be here')
                 io.emit('top score data', {topScore: user.platformer.topScore, username: username})
             } else {
                 // create section in user database for platformer data
