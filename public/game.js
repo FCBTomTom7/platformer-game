@@ -2,7 +2,8 @@ let socket = io('http://localhost:3000');
 let user = window.location.search.split('?')[1]?.split('username=')[1] || null
 let screenWidth = window.innerWidth;
 let screenHeight = window.innerHeight;
-const platformSpeed = 5;
+let platformSpeed = 5;
+let platformAcc = 0.001;
 const gravity = 0.6;
 const playerJump = -7;
 const playerWidth = 45;
@@ -20,6 +21,8 @@ let platforms = document.querySelectorAll('.platform')
 let player = document.getElementById('player');
 let scoreEl = document.getElementById('score');
 let topScoreEl = document.getElementById('top-score');
+let pressToStart = document.getElementById('press-to-start');
+let state = 0; 
 // console.log(screenHeight)
 addEventListener('resize', () => {
     screenWidth = window.innerWidth;
@@ -36,26 +39,38 @@ addEventListener('keypress', (e) => {
 })
 
 
+
+
+
+
+
+
+
 startGame();
 function update() {
+
+   
+
     movePlatformsLeft();
+    
     if(!canJump) {
         playerVel += gravity;
     }
     
     curPos += playerVel;
+    
     // CHECK COLLISION HERE
     let collisionData = onGround();
     // console.log(collisionData);
     if(collisionData) {
         // console.log('we out here');
         let plat = collisionData[1]
-        if(collisionData[2] == 1) {
+        if(collisionData[2] == 1) {  // player on top of platform
             playerVel = 0;
             canJump = true;
             
             curPos = Number(plat.style.top.slice(0, -2)) - playerHeight;
-        } else if(collisionData[2] == 2) {
+        } else if(collisionData[2] == 2) { // player on side of platform
             let left = Number(plat.style.left.slice(0, -2)) - playerWidth;
             player.style.left = '' + left + 'px';
         }
@@ -105,10 +120,12 @@ function positionPlatforms() {
 
 function movePlatformsLeft() {
     // console.log('cuh')
+    
     platforms.forEach(platform => {
       let curLeft = platform.style.left.match(/\-?[0-9]+/)[0];
     //   console.log(curLeft);
       curLeft -= platformSpeed;
+        
       if(curLeft <= screenWidth / -3) {
         curLeft = screenWidth
         setPlatformWidthAndHeight(platform)
@@ -117,6 +134,8 @@ function movePlatformsLeft() {
       }  
       platform.style.left = '' + curLeft + 'px'
     })
+    
+    
 }
 
 function setPlatformWidthAndHeight(platform) {
@@ -156,7 +175,7 @@ function updateStats() {
 }
 
 function checkGameOver() {
-    if(curPos > screenHeight) {
+    if(curPos > screenHeight || Number(player.style.left.slice(0, -2)) + playerWidth < 0) {
         handleGameOver();
     }
 }
@@ -176,15 +195,6 @@ function handleGameOver() {
 }
 
 // IO BULLSHIT
-// socket.on('top score data', ({topScore, username}) => {
-//     console.log('we here cuh')
-//     if(username == user) {
-//         console.log('username matches')
-//         topScoreEl.innerHTML = score;
-//         topScore = score;
-//     }
-    
-// }) 
 socket.emit('get top score platformer', user)
 socket.on('top score from db', ts => {
     if(ts) {
