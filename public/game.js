@@ -33,6 +33,7 @@ addEventListener('keypress', (e) => {
    if(state == 0) {
     state = 1;
     pressToStart.style.visibility = 'hidden'
+    setUp();
     startGame();
    }
     if(e.key === ' ') {
@@ -93,7 +94,7 @@ function update() {
 
 
 function startGame() {
-    setUp();
+    //setUp();
     gameInterval = setInterval(update, 20)
 }
 
