@@ -67,6 +67,18 @@ io.on('connection', socket => {
         console.log('why')
     })
 
+    socket.on('get top score platformer', username => {
+        userDataBase.findOne({username}).then(user => {
+            if(user) {
+                console.log('sending client topscore')
+                socket.emit('top score from db', user.platformer.topScore)
+            } else {
+                console.log('user doesnt exist')
+                socket.emit('top score from db', null);
+            }
+        })
+    })
+
 })
 routes(app, userDataBase, io);
 auth(userDataBase);

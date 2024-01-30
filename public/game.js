@@ -176,12 +176,23 @@ function handleGameOver() {
 }
 
 // IO BULLSHIT
-socket.on('top score data', ({topScore, username}) => {
-    console.log('we here cuh')
-    if(username == user) {
-        console.log('username matches')
-        topScoreEl.innerHTML = score;
-        topScore = score;
+// socket.on('top score data', ({topScore, username}) => {
+//     console.log('we here cuh')
+//     if(username == user) {
+//         console.log('username matches')
+//         topScoreEl.innerHTML = score;
+//         topScore = score;
+//     }
+    
+// }) 
+socket.emit('get top score platformer', user)
+socket.on('top score from db', ts => {
+    if(ts) {
+        topScore = ts;
+        topScoreEl.innerHTML = Math.round(topScore);
+    } else {
+        topScore = 0;
+        topScoreEl.innerHTML = 0; 
     }
     
-}) 
+})

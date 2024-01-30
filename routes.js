@@ -23,7 +23,7 @@ module.exports = (app, userDataBase, io) => {
         let password = req.user.password;
         userDataBase.findOne({username: username, password: password}).then(user => {
             if(user.platformer) {
-                io.emit('top score data', {topScore: user.platformer.topScore, username: username})
+                
             } else {
                 // create section in user database for platformer data
                 userDataBase.updateOne({username: username, password: password}, {$set: {
@@ -32,7 +32,6 @@ module.exports = (app, userDataBase, io) => {
                     }
                 }}).then(data => {
                     console.log('added platformer section to ' + username);
-                    io.emit('top score data', {topScore: 0, username: username})
                 }).catch(err => {
                     console.error(err);
                 })
