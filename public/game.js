@@ -12,7 +12,7 @@ const scoreIncrement = 0.2;
 let gameInterval;
 let score = 0;
 let topScore = 0;
-let playerVel;
+let playerVel = 0;
 let startPos = screenHeight / 3;
 let curPos = startPos;
 let startOffset = 50;
@@ -30,7 +30,11 @@ addEventListener('resize', () => {
 })
 
 addEventListener('keypress', (e) => {
-   
+   if(state == 0) {
+    state = 1;
+    pressToStart.style.visibility = 'hidden'
+    startGame();
+   }
     if(e.key === ' ') {
         if(canJump) {
             playerVel += playerJump;
@@ -46,7 +50,8 @@ addEventListener('keypress', (e) => {
 
 
 
-startGame();
+// startGame();
+setUp();
 function update() {
 
    
@@ -93,7 +98,9 @@ function startGame() {
 }
 
 function setUp() {
+    score = 0;
     playerVel = 0;
+    curPos = startPos;
     setPlayerStartPosition();
     positionPlatforms();
 }
@@ -182,6 +189,8 @@ function checkGameOver() {
 
 function handleGameOver() {
     console.log('game over!');
+    state = 0;
+    pressToStart.style.visibility = 'visible'
     clearInterval(gameInterval);
     if(score > topScore) {
         topScore = score;
