@@ -1,0 +1,16 @@
+/* #platformer-container {
+    width: 250px;
+    height: 188px;
+    border: 1px solid black;
+} */
+
+img:hover {
+    box-shadow: 3px 3px 1px gray;
+    margin: -3px -3px;
+    /* transition-duration: 100ms; */
+}
+
+img {
+    box-shadow: none;
+    transition-duration: 100ms;
+}

@@ -22,10 +22,7 @@ module.exports = (app, userDataBase, io) => {
         let username = req.user.username;
         let password = req.user.password;
         userDataBase.findOne({username: username, password: password}).then(user => {
-            if(user.platformer) {
-                
-            } else {
-                // create section in user database for platformer data
+            if(!user.platformer) {
                 userDataBase.updateOne({username: username, password: password}, {$set: {
                     platformer: {
                         topScore: 0
@@ -34,8 +31,11 @@ module.exports = (app, userDataBase, io) => {
                     console.log('added platformer section to ' + username);
                 }).catch(err => {
                     console.error(err);
-                })
-            }
+                }) 
+            } 
+                // create section in user database for platformer data
+                
+            
         }).catch(err => {
             console.error(err);
         })
@@ -43,7 +43,32 @@ module.exports = (app, userDataBase, io) => {
     })
 
 
-
+    app.route('/pong')
+    .get(ensureAuthenticated, (req, res) => {
+        // we first want to check if user has data in this game already
+        let username = req.user.username;
+        let password = req.user.password;
+        userDataBase.findOne({username: username, password: password}).then(user => {
+            if(!user.pong) {
+                userDataBase.updateOne({username: username, password: password}, {$set: {
+                    pong: {
+                        wins: 0,
+                        losses: 0
+                    }
+                }}).then(data => {
+                    console.log('added pong section to ' + username);
+                }).catch(err => {
+                    console.error(err);
+                }) 
+            } 
+                // create section in user database for platformer data
+                
+            
+        }).catch(err => {
+            console.error(err);
+        })
+        res.sendFile(process.cwd() + '/views/pong.html')
+    })
 
     app.route('/login')
     .post(passport.authenticate('local', {failureRedirect: '/'}), (req, res) => {
