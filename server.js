@@ -93,9 +93,8 @@ io.on('connection', socket => {
             
             if(pongRooms[pongRoomId].players < 2) {
                 // join room
-                socket.join(pongRoomId)
                 pongRooms[pongRoomId].players++;
-                io.to(pongRoomId).emit('player joined', pongRooms[pongRoomId].players);
+                
             } else {
                 // room is full
                 // create new one
@@ -103,8 +102,7 @@ io.on('connection', socket => {
                 pongRooms[pongRoomId] = {
                     players: 1
                 }
-                socket.join(pongRoomId)
-                io.to(pongRoomId).emit('player joined', pongRooms[pongRoomId].players);
+                
             }
         } else {
             // room simply doesn't exist
@@ -112,9 +110,15 @@ io.on('connection', socket => {
             pongRooms[pongRoomId] = {
                 players: 1
             }
-            socket.join(pongRoomId)
-            io.to(pongRoomId).emit('player joined', pongRooms[pongRoomId].players);
+            
         }
+        socket.join(pongRoomId);
+        socket.roomId = pongRoomId;
+        io.to(pongRoomId).emit('player joined', pongRooms[pongRoomId].players);
+    })
+
+    socket.on('player moved', ({playerId, curPos}) => {
+        io.to(socket.roomId).emit('update player position', {id: playerId, pos: curPos})
     })
 
 })

@@ -8,12 +8,23 @@ let paddleSpeed = 10;
 const playerWidth = 250;
 const playerHeight = 35;
 let player = document.getElementById('player')
+let opponent = document.getElementById('opponent')
 let curPos = window.innerWidth / 2 - playerWidth / 2;
+let oppPos = curPos;
+
 window.addEventListener('keydown', e => {
     if(e.key === 'ArrowLeft') {
         move(-1);
+        socket.emit('player moved', {
+            playerId,
+            curPos
+        })
     } else if(e.key === "ArrowRight") {
         move(1);
+        socket.emit('player moved', {
+            playerId,
+            curPos
+        })
     }
 })
 
@@ -56,4 +67,10 @@ socket.on('player joined', playerCount => {
     // also put like a waiting for other player when the playercount is 1
     console.log(players);
     console.log(playerId);
+})
+socket.on('update player position', ({id, pos}) => {
+    if(playerId != id) { // the player is the oponent, update it
+        let newPos = window.innerWidth - playerWidth - pos;
+        opponent.style.left = "".concat(newPos).concat('px'); // tmp
+    }
 })
