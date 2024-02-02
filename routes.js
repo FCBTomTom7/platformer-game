@@ -85,7 +85,6 @@ module.exports = (app, userDataBase, io) => {
             } else {
                 userDataBase.insertOne({username: req.body.username, password: bcrypt.hashSync(req.body.password, 12)}).then(data => {
                     console.log('registered user');
-                    console.log(data);
                     next(null, {
                         username: req.body.username,
                         password: req.body.password

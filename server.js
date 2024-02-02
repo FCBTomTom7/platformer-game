@@ -40,6 +40,11 @@ io.use(wrap(passport.session()));
 app.use(passport.initialize())
 app.use(passport.session());
 
+let pongRoomId = 1;
+let pongRooms = {
+
+}
+
 
 io.on('connection', socket => {
     console.log('user connection lul');
@@ -77,6 +82,39 @@ io.on('connection', socket => {
                 socket.emit('top score from db', null);
             }
         })
+    })
+
+    // pong
+
+    socket.on('request pong room', () => {
+        // first check current pongRoomId number and see if a room exists with that id
+        if(pongRoomId in pongRooms) {
+            // room exists already, check capacity
+            
+            if(pongRooms[pongRoomId].players < 2) {
+                // join room
+                socket.join(pongRoomId)
+                pongRooms[pongRoomId].players++;
+                io.to(pongRoomId).emit('player joined', pongRooms[pongRoomId].players);
+            } else {
+                // room is full
+                // create new one
+                pongRoomId++;
+                pongRooms[pongRoomId] = {
+                    players: 1
+                }
+                socket.join(pongRoomId)
+                io.to(pongRoomId).emit('player joined', pongRooms[pongRoomId].players);
+            }
+        } else {
+            // room simply doesn't exist
+            pongRoomId++;
+            pongRooms[pongRoomId] = {
+                players: 1
+            }
+            socket.join(pongRoomId)
+            io.to(pongRoomId).emit('player joined', pongRooms[pongRoomId].players);
+        }
     })
 
 })
