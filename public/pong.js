@@ -5,17 +5,23 @@ let playerId;
 let gameInterval;
 let interval = 20;
 let paddleSpeed = 10;
+let puckWidth = 40;
+let puckHeight = 40;
 const playerWidth = 250;
 const playerHeight = 35;
 let screenWidth = 1250;
+console.log(window.innerHeight);
 let rightEdge = screenWidth + ((window.innerWidth - screenWidth) / 2);
 let leftEdge = (window.innerWidth - screenWidth) / 2;
 let player = document.getElementById('player');
 let opponent = document.getElementById('opponent');
+let puck = document.getElementById('puck')
 let leftCountdown = document.getElementById('left-counter');
 let rightCountdown = document.getElementById('right-counter');
 let countValue = 3;
 let curPos = window.innerWidth / 2 - playerWidth / 2;
+let puckLeft = window.innerWidth / 2 - puckWidth / 2;
+let puckTop = window.innerHeight / 2 - puckHeight / 2;
 let oppPos = curPos;
 
 window.addEventListener('keydown', e => {
@@ -108,4 +114,29 @@ socket.on('update countdown', () => {
     }
     leftCountdown.innerHTML = countValue;
     rightCountdown.innerHTML = countValue;
+})
+
+socket.on('set up game', () => {
+    curPos = window.innerWidth / 2 - playerWidth / 2;
+    puckLeft = window.innerWidth / 2 - puckWidth / 2;
+    puckTop = window.innerHeight / 2 - puckHeight / 2;
+    player.style.left = ''.concat(curPos).concat('px');
+    puck.style.left = ''.concat(puckLeft).concat('px');
+    puck.style.top = ''.concat(puckTop).concat('px');
+    socket.emit('player moved', {playerId, curPos})
+})
+
+socket.on('update ball position', puckPos => {
+    // need to translate position based on which player the client is
+    let translatedLeft;
+    let translatedTop;
+    if(playerId == 1) {
+        translatedLeft = ((window.innerWidth - screenWidth) / 2) + puckPos[0];
+        translatedTop = puckPos[1];
+    } else {
+        translatedLeft = window.innerWidth - ((window.innerWidth - screenWidth) / 2) - puckPos[0];
+        translatedTop = window.innerHeight - puckPos[1];
+    }
+    puck.style.left = "".concat(translatedLeft).concat('px');
+    puck.style.top = "".concat(translatedTop).concat('px');
 })
