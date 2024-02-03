@@ -4,13 +4,35 @@
     border: 1px solid black;
 } */
 
+h1 {
+    width: 100%;
+    text-align: center;
+    position: fixed;
+    top: calc(50% - 350px);
+}
+
 img:hover {
     box-shadow: 3px 3px 1px gray;
     margin: -3px -3px;
+    z-index: 4;
     /* transition-duration: 100ms; */
 }
 
 img {
     box-shadow: none;
     transition-duration: 100ms;
+    width: 250px;
+    height: 188px;
+}
+
+#game-flex {
+    display: flex;
+    position: fixed;
+    width: 1000px;
+    height: 564px;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    top: calc(50% - 282px);
+    left: calc(50% - 500px);
 }
