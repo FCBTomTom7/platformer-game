@@ -10,8 +10,11 @@ const playerHeight = 35;
 let screenWidth = 1250;
 let rightEdge = screenWidth + ((window.innerWidth - screenWidth) / 2);
 let leftEdge = (window.innerWidth - screenWidth) / 2;
-let player = document.getElementById('player')
-let opponent = document.getElementById('opponent')
+let player = document.getElementById('player');
+let opponent = document.getElementById('opponent');
+let leftCountdown = document.getElementById('left-counter');
+let rightCountdown = document.getElementById('right-counter');
+let countValue = 3;
 let curPos = window.innerWidth / 2 - playerWidth / 2;
 let oppPos = curPos;
 
@@ -70,10 +73,39 @@ socket.on('player joined', playerCount => {
     // also put like a waiting for other player when the playercount is 1
     console.log(players);
     console.log(playerId);
+    if(playerCount == 2) {
+        leftCountdown.style.visibility = 'visible';
+        rightCountdown.style.visibility = 'visible';
+        leftCountdown.innerHTML = countValue;
+        rightCountdown.innerHTML = countValue;
+        countValue = 3;
+        if(playerId == 1) {
+            // player is host, it will initiate the start game sequence
+            socket.emit('start countdown pong');
+            
+            
+        }
+    }
+    
 })
 socket.on('update player position', ({id, pos}) => {
     if(playerId != id) { // the player is the oponent, update it
         let newPos = window.innerWidth - playerWidth - pos;
         opponent.style.left = "".concat(newPos).concat('px'); // tmp
     }
+})
+
+socket.on('update countdown', () => {
+ // im just keeping track of the count to avoid sending unnecessary data over the socket
+    countValue--;
+    if(countValue == 0) {
+        leftCountdown.style.visibility = 'hidden';
+        rightCountdown.style.visibility = 'hidden';
+        if(playerId == 1) {
+            socket.emit('start game');
+        }
+        
+    }
+    leftCountdown.innerHTML = countValue;
+    rightCountdown.innerHTML = countValue;
 })

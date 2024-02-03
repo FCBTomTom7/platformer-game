@@ -40,3 +40,18 @@ body {
     top: calc(50% - 20px);
     left: calc(50% - 20px);
 }
+
+#left-counter, #right-counter {
+    visibility: hidden;
+    position: absolute;
+    color: white;
+    top: 50%;
+}
+
+#left-counter {
+    left: 50px;
+}
+
+#right-counter {
+    left: calc(100% - 50px);
+}

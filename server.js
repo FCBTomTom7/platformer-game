@@ -9,8 +9,9 @@ const { MongoClient } = require('mongodb');
 const client = new MongoClient(process.env.URI)
 const session = require('express-session')
 const MongoStore = require('connect-mongo');
-const routes = require('./routes.js')
-const auth = require('./auth.js')
+const routes = require('./routes.js');
+const auth = require('./auth.js');
+let pongBallLogic = require('./pongBallServerLogic.js');
 const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET,
     resave: true,
@@ -119,6 +120,33 @@ io.on('connection', socket => {
 
     socket.on('player moved', ({playerId, curPos}) => {
         io.to(socket.roomId).emit('update player position', {id: playerId, pos: curPos})
+    })
+
+    socket.on('start countdown pong', () => {
+        let interval;
+        let count = 3;
+        interval = setInterval(() => {
+            if(count == 0) {
+                clearInterval(interval)
+                return;
+            }
+            count--;
+            io.to(socket.roomId).emit('update countdown');
+            
+        }, 1000);
+        // setTimeout(() => {
+        //     io.to(socket.roomId).emit('update countdown')
+        //     setTimeout(() => {
+        //         io.to(socket.roomId).emit('update countdown')
+        //         setTimeout(() => {
+        //             io.to(socket.roomId).emit('update countdown')
+        //         }, 1000);
+        //     }, 1000);
+        // }, 1000);
+    })
+
+    socket.on('start game', () => {
+        pongBallLogic(socket, io);
     })
 
 })
