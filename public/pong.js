@@ -7,6 +7,9 @@ let interval = 20;
 let paddleSpeed = 10;
 const playerWidth = 250;
 const playerHeight = 35;
+let screenWidth = 1250;
+let rightEdge = screenWidth + ((window.innerWidth - screenWidth) / 2);
+let leftEdge = (window.innerWidth - screenWidth) / 2;
 let player = document.getElementById('player')
 let opponent = document.getElementById('opponent')
 let curPos = window.innerWidth / 2 - playerWidth / 2;
@@ -41,10 +44,10 @@ function update() {
 
 function move(dir) {
     curPos += dir * paddleSpeed;
-    if(curPos <= 0) { // imma do this check so there's no weird snapping
-        curPos = 0;
-    } else if(curPos >= window.innerWidth - playerWidth) {
-        curPos = window.innerWidth - playerWidth;
+    if(curPos <= leftEdge) { // imma do this check so there's no weird snapping
+        curPos = leftEdge;
+    } else if(curPos >= rightEdge - playerWidth) {
+        curPos = rightEdge - playerWidth;
     }
     player.style.left = "".concat(curPos).concat('px');
     
