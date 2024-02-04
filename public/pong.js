@@ -2,6 +2,7 @@ let socket = io("http://localhost:3000");
 let players = []; // it will be [1] at first, then when the second player joins it will be [1, 2]
 // or if this is the second player, it will only ever be [2]
 let playerId; 
+let canCheck;
 let gameInterval;
 let interval = 20;
 let paddleSpeed = 10;
@@ -9,7 +10,8 @@ let puckWidth = 40;
 let puckHeight = 40;
 const playerWidth = 250;
 const playerHeight = 35;
-let screenWidth = 1250;
+let gap = 35;
+let screenWidth = 800;
 console.log(window.innerHeight);
 let rightEdge = screenWidth + ((window.innerWidth - screenWidth) / 2);
 let leftEdge = (window.innerWidth - screenWidth) / 2;
@@ -64,7 +66,23 @@ function move(dir) {
 
 
 
-
+function checkCollision() {
+    if(puckTop + puckHeight >= window.innerHeight - (gap + playerHeight)) {
+        
+        if(puckLeft + puckWidth > curPos && puckLeft < curPos + playerWidth) {
+            // hit top of PLAYER paddle
+            // console.log('client side buh');
+            
+            return true;
+        }
+    } else if(puckTop <= gap + playerHeight) {
+        // hit 'top' (really bottom) of OPPONENT paddle
+        if(puckLeft + puckWidth > oppPos && puckLeft < oppPos + playerWidth) {
+            return true;
+        }
+    }
+    return false;
+}
 
 
 
@@ -76,6 +94,7 @@ socket.on('player joined', playerCount => {
     // this is so i can keep track of which player is moving on the server side :o
     players.push(playerCount)
     playerId = players.indexOf(1) == -1 ? 2 : 1; // if 1 is not present in the players array, then this must be player 2
+    canCheck = playerId == 1;
     // also put like a waiting for other player when the playercount is 1
     console.log(players);
     console.log(playerId);
@@ -96,8 +115,8 @@ socket.on('player joined', playerCount => {
 })
 socket.on('update player position', ({id, pos}) => {
     if(playerId != id) { // the player is the oponent, update it
-        let newPos = window.innerWidth - playerWidth - pos;
-        opponent.style.left = "".concat(newPos).concat('px'); // tmp
+        oppPos = window.innerWidth - playerWidth - pos;
+        opponent.style.left = "".concat(oppPos).concat('px'); // tmp
     }
 })
 
@@ -126,17 +145,32 @@ socket.on('set up game', () => {
     socket.emit('player moved', {playerId, curPos})
 })
 
+let safeGuard = 0;
+
 socket.on('update ball position', puckPos => {
     // need to translate position based on which player the client is
-    let translatedLeft;
-    let translatedTop;
+    
     if(playerId == 1) {
-        translatedLeft = ((window.innerWidth - screenWidth) / 2) + puckPos[0];
-        translatedTop = puckPos[1];
+        puckLeft = ((window.innerWidth - screenWidth) / 2) + puckPos[0];
+        puckTop = puckPos[1];
     } else {
-        translatedLeft = window.innerWidth - ((window.innerWidth - screenWidth) / 2) - puckPos[0];
-        translatedTop = window.innerHeight - puckPos[1];
+        puckLeft = window.innerWidth - ((window.innerWidth - screenWidth) / 2) - puckPos[0] - puckWidth;
+        puckTop = window.innerHeight - puckPos[1] - puckHeight;
     }
-    puck.style.left = "".concat(translatedLeft).concat('px');
-    puck.style.top = "".concat(translatedTop).concat('px');
+    if(canCheck) {
+        
+        if(checkCollision()) {
+            socket.emit('collision');
+            console.log('AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
+            canCheck = false;
+            setTimeout(() => {
+                canCheck = true;
+            }, 2000);
+        }
+    }
+    
+
+    
+    puck.style.left = "".concat(puckLeft).concat('px');
+    puck.style.top = "".concat(puckTop).concat('px');
 })
