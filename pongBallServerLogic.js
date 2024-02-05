@@ -2,7 +2,7 @@ module.exports = (socket, io) => {
     let screenWidth = 800;
     let screenHeight = 947;
     let puckSpeed = 6;
-    let interval = 50;
+    let interval = 25;
     let puckWidth = 40;
     let puckHeight = 40;
     // we'll just keep track of the position using coordinates based on the gamescreen width and height
@@ -38,7 +38,23 @@ module.exports = (socket, io) => {
             puckVelocity[0] *= -1;
             puckPos[0] = screenWidth - puckWidth;
         }
-        
+        if(puckPos[1] + puckHeight >= screenHeight) {
+            socket.off('collision', (...args) => {
+                
+            })
+            io.to(socket.roomId).emit('player scored', 2);
+            clearInterval(gameInterval);
+            // p2 scored
+        } else if(puckPos[1] <= 0) {
+            // p1 scored
+            socket.off('collision', (...args) => {
+                
+            })
+            io.to(socket.roomId).emit('player scored', 1);
+            clearInterval(gameInterval);
+        }
+
+
         io.to(socket.roomId).emit('update ball position', puckPos);
         
         

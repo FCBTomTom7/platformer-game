@@ -1,9 +1,15 @@
 let socket = io("http://localhost:3000");
 let players = []; // it will be [1] at first, then when the second player joins it will be [1, 2]
 // or if this is the second player, it will only ever be [2]
+let user = window.location.search.split('?')[1]?.split('username=')[1] || null
 let playerId; 
 let canCheck;
 let gameInterval;
+let pointsToWin = 7;
+let playerPoints = 0;
+let opponentPoints = 0;
+let playerWins = 0;
+let opponentWins = 0;
 let interval = 20;
 let paddleSpeed = 10;
 let puckWidth = 40;
@@ -20,6 +26,8 @@ let opponent = document.getElementById('opponent');
 let puck = document.getElementById('puck')
 let leftCountdown = document.getElementById('left-counter');
 let rightCountdown = document.getElementById('right-counter');
+let playerScore = document.getElementById('player-score');
+let opponentScore = document.getElementById('opponent-score');
 let countValue = 3;
 let curPos = window.innerWidth / 2 - playerWidth / 2;
 let puckLeft = window.innerWidth / 2 - puckWidth / 2;
@@ -124,8 +132,8 @@ socket.on('update countdown', () => {
  // im just keeping track of the count to avoid sending unnecessary data over the socket
     countValue--;
     if(countValue == 0) {
-        leftCountdown.style.visibility = 'hidden';
-        rightCountdown.style.visibility = 'hidden';
+        leftCountdown.innerHTML = playerWins;
+        rightCountdown.innerHTML = playerWins;
         if(playerId == 1) {
             socket.emit('start game');
         }
@@ -142,6 +150,8 @@ socket.on('set up game', () => {
     player.style.left = ''.concat(curPos).concat('px');
     puck.style.left = ''.concat(puckLeft).concat('px');
     puck.style.top = ''.concat(puckTop).concat('px');
+    leftCountdown.innerHTML = playerWins;
+    rightCountdown.innerHTML = opponentWins;
     socket.emit('player moved', {playerId, curPos})
 })
 
@@ -173,4 +183,35 @@ socket.on('update ball position', puckPos => {
     
     puck.style.left = "".concat(puckLeft).concat('px');
     puck.style.top = "".concat(puckTop).concat('px');
+})
+
+socket.on('player scored', id => {
+    if(id === playerId) {
+        playerPoints++;
+        
+    } else {
+        opponentPoints++;
+        
+    }
+    if(playerPoints >= 7 || opponentPoints >= 7) {
+        // somebody won
+        if(playerPoints > opponentPoints) {
+            // player won
+            socket.emit('update win loss pong', {username: user, type: "win"});
+            playerWins++;
+            leftCountdown.innerHTML = playerWins;
+        } else {
+            socket.emit('update win loss pong', {username: user, type: "loss"});
+            opponentWins++;
+            rightCountdown.innerHTML = opponentWins;
+        }
+        playerPoints = 0;
+        opponentPoints = 0;
+    }
+    playerScore.innerHTML = playerPoints;
+    opponentScore.innerHTML = opponentPoints;
+    countValue = 3;
+    if(playerId === 1) {
+        socket.emit('start countdown pong');
+    }
 })

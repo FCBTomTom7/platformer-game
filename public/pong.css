@@ -41,6 +41,32 @@ body {
     left: calc(50% - 20px);
 }
 
+#middle-ring {
+    width: 200px;
+    height: 200px;
+    border-radius: 155px;
+    border: 1px solid white;
+    position: absolute;
+    left: calc(50% - 100px);
+    top: calc(50% - 100px);
+}
+
+#score {
+    color: white;
+    position: inherit;
+    font-size: 3rem;
+    left: calc(50% - 44px);
+    top: calc(50% - 28px);
+}
+
+.blue {
+    color: #245256;
+}
+
+.red {
+    color: #622424;
+}
+
 #left-counter, #right-counter {
     visibility: hidden;
     position: absolute;

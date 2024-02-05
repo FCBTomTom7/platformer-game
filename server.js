@@ -149,6 +149,29 @@ io.on('connection', socket => {
         pongBallLogic(socket, io);
     })
 
+    socket.on('update win loss pong', ({username, type}) => {
+        userDataBase.findOne({username}).then(user => {
+            if(user) {
+                let curWins = type === "win" ? user.pong.wins + 1 : user.pong.wins;
+                let curLosses = type === "loss" ? user.pong.losses + 1 : user.pong.losses;
+                userDataBase.updateOne({username}, {$set: {
+                    pong: {
+                        wins: curWins,
+                        losses: curLosses
+                    }
+                }}).then(d => {
+                    console.log('updated win loss of ' + user.username);
+                }).catch(err => {
+                    console.error(err);
+                })
+            } else {
+                console.log('user doesnt exist to update pong db 4shrug');
+            }
+        }).catch(err => {
+            console.error(err);
+        }) 
+    })
+
 })
 routes(app, userDataBase, io);
 auth(userDataBase);
