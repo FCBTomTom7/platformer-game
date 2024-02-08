@@ -1,3 +1,5 @@
+
+
 let socket = io("http://localhost:3000");
 let players = []; // it will be [1] at first, then when the second player joins it will be [1, 2]
 // or if this is the second player, it will only ever be [2]
@@ -56,9 +58,6 @@ function play() {
     }, interval);    
 }
 
-function update() {
-
-}
 
 function move(dir) {
     curPos += dir * paddleSpeed;
@@ -72,21 +71,25 @@ function move(dir) {
 }
 
 
-
+let mergeAllowance = 10;
 function checkCollision() {
-    if(puckTop + puckHeight >= window.innerHeight - (gap + playerHeight)) {
+    if(puckTop + puckHeight >= window.innerHeight - (gap + playerHeight) && puckTop + puckHeight <= window.innerHeight - (gap + playerHeight) + mergeAllowance) {
         
         if(puckLeft + puckWidth > curPos && puckLeft < curPos + playerWidth) {
             // hit top of PLAYER paddle
             // console.log('client side buh');
             
-            return true;
+            return [true, 1];
         }
-    } else if(puckTop <= gap + playerHeight) {
+    } else if(puckTop <= gap + playerHeight && puckTop >= gap + playerHeight - mergeAllowance) {
         // hit 'top' (really bottom) of OPPONENT paddle
         if(puckLeft + puckWidth > oppPos && puckLeft < oppPos + playerWidth) {
-            return true;
+            return [true, 1];
         }
+    } else if(puckTop + puckHeight >= window.innerHeight - (gap + playerHeight) && puckTop <= window.innerHeight - gap && ((puckLeft + puckWidth >= curPos && puckLeft + puckWidth <= curPos + mergeAllowance) || (puckLeft <= curPos + playerWidth && puckLeft >= curPos + playerWidth - mergeAllowance))) {
+        return [true, 2];
+    } else if(puckTop <= gap + playerHeight && puckTop + puckHeight >= gap && ((puckLeft + puckWidth >= oppPos && puckLeft + puckWidth <= oppPos + mergeAllowance) || (puckLeft <= oppPos + playerWidth && puckLeft >= oppPos + playerWidth - mergeAllowance))) {
+        return [true, 2]
     }
     return false;
 }
@@ -158,7 +161,7 @@ socket.on('set up game', () => {
 })
 
 let safeGuard = 0;
-
+let d;
 socket.on('update ball position', puckPos => {
     // need to translate position based on which player the client is
     if(playerId == 1) {
@@ -170,8 +173,8 @@ socket.on('update ball position', puckPos => {
     }
     if(canCheck) {
         
-        if(checkCollision()) {
-            socket.emit('collision');
+        if(d = checkCollision()) {
+            socket.emit('collision', d[1]);
             canCheck = false;
             setTimeout(() => {
                 canCheck = true;

@@ -34,8 +34,13 @@ module.exports = (socket, io) => {
     // initial velocity set up
 
     
-    socket.on('collision', () => {
-        puckVelocity[1] *= -1;
+    socket.on('collision', (type) => {
+        if(type == 1) {
+            puckVelocity[1] *= -1;
+        } else {
+            puckVelocity[0] *= -1;
+        }
+        
     })
 
     let gameInterval;
