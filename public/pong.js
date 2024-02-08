@@ -18,7 +18,6 @@ const playerWidth = 250;
 const playerHeight = 35;
 let gap = 35;
 let screenWidth = 800;
-console.log(window.innerHeight);
 let rightEdge = screenWidth + ((window.innerWidth - screenWidth) / 2);
 let leftEdge = (window.innerWidth - screenWidth) / 2;
 let player = document.getElementById('player');
@@ -144,12 +143,15 @@ socket.on('update countdown', () => {
 })
 
 socket.on('set up game', () => {
+    
     curPos = window.innerWidth / 2 - playerWidth / 2;
-    puckLeft = window.innerWidth / 2 - puckWidth / 2;
-    puckTop = window.innerHeight / 2 - puckHeight / 2;
+    // puckLeft = window.innerWidth / 2 - puckWidth / 2;
+    // puckTop = window.innerHeight / 2 - puckHeight / 2;
+    console.log('setting up game client side')
+    console.log('puckLeft', puckLeft, 'puckTop', puckTop)
     player.style.left = ''.concat(curPos).concat('px');
-    puck.style.left = ''.concat(puckLeft).concat('px');
-    puck.style.top = ''.concat(puckTop).concat('px');
+    // puck.style.left = ''.concat(puckLeft).concat('px');
+    // puck.style.top = ''.concat(puckTop).concat('px');
     leftCountdown.innerHTML = playerWins;
     rightCountdown.innerHTML = opponentWins;
     socket.emit('player moved', {playerId, curPos})
@@ -159,7 +161,6 @@ let safeGuard = 0;
 
 socket.on('update ball position', puckPos => {
     // need to translate position based on which player the client is
-    
     if(playerId == 1) {
         puckLeft = ((window.innerWidth - screenWidth) / 2) + puckPos[0];
         puckTop = puckPos[1];
@@ -171,7 +172,6 @@ socket.on('update ball position', puckPos => {
         
         if(checkCollision()) {
             socket.emit('collision');
-            console.log('AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
             canCheck = false;
             setTimeout(() => {
                 canCheck = true;
@@ -211,6 +211,8 @@ socket.on('player scored', id => {
     playerScore.innerHTML = playerPoints;
     opponentScore.innerHTML = opponentPoints;
     countValue = 3;
+    leftCountdown.innerHTML = countValue;
+    rightCountdown.innerHTML = countValue;
     if(playerId === 1) {
         socket.emit('start countdown pong');
     }

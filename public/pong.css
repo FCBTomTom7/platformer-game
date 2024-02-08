@@ -60,24 +60,25 @@ body {
 }
 
 .blue {
-    color: #245256;
+    color: #3be8f8;
 }
 
 .red {
-    color: #622424;
+    color: #e11919;
 }
 
 #left-counter, #right-counter {
     visibility: hidden;
     position: absolute;
     color: white;
-    top: 50%;
+    top: 42%;
+    font-size: 10rem;
 }
 
 #left-counter {
-    left: 50px;
+    left: 25px;
 }
 
 #right-counter {
-    left: calc(100% - 50px);
+    left: calc(100% - 100px);
 }
