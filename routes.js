@@ -70,6 +70,12 @@ module.exports = (app, userDataBase, io) => {
         res.sendFile(process.cwd() + '/views/pong.html')
     })
 
+    app.route('/snake')
+    .get(ensureAuthenticated, (req, res) => {
+        // we'll implement the back end later
+        res.sendFile(process.cwd() + '/views/snake.html');
+    })
+
     app.route('/login')
     .post(passport.authenticate('local', {failureRedirect: '/'}), (req, res) => {
         console.log(`${req.body.username} has logged in`);
