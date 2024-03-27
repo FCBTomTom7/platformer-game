@@ -16,9 +16,9 @@ c.stroke();
 // document assignments
 let pressToStart = document.getElementById('press-to-start');
 let scoreEl = document.getElementById('score');
-
+let highScoreEl = document.getElementById('high-score');
 // game variables
-let fps = 1;
+let fps = 5;
 const rows = 12;
 const cols = 16;
 const cellWidth = width / cols;
@@ -37,6 +37,7 @@ initBoard();
 let center = [Math.floor(cols / 2), Math.floor(rows / 2)];
 let snake = [[center[0], center[1]], [center[0] + 1, center[1]]]; // head of snake set to middle of board along with one body piece
 let dir = 0;
+let prevDir = 0;
 /*
     Directions:
     -1 - stopped
@@ -55,21 +56,27 @@ document.addEventListener('keypress', (e) => {
         switch(e.key) {
             case 'w':
             case 'ArrowUp':
-                dir = 1;
+                if(prevDir !== 3) dir = 1;   
                 break;
             case 'a':
             case 'ArrowLeft':
-                dir = 0;
+                if(prevDir !== 2) dir = 0;
                 break;
             case 's':
             case 'ArrowDown':
-                dir = 3;
+                if(prevDir !== 1) dir = 3;
                 break;
             case 'd':
             case 'ArrowRight':
-                dir = 2;
+                if(prevDir !== 0) dir = 2;
                 break;
         }
+    }
+    if(state === -1) {
+        state = 0;
+        dir = 0;
+        placeCoin();
+        pressToStart.style.visibility = 'hidden';
     }
     
 })
@@ -77,7 +84,7 @@ document.addEventListener('keypress', (e) => {
 
 
 let state = -1; // pregame state
-let count = 0;
+// grid[5][6] = 2;
 function draw() {
     setTimeout(() => {
         requestAnimationFrame(draw);
@@ -88,30 +95,27 @@ function draw() {
             // display Press any key to start text
             // reset game so that snake is of length 3, and score is 0
             // snake should be in the middle of the screen going left
-            pressToStart.style.visibility = 'visible';
-            updateScore(0);
-            // console.log('snake b4 update');
-            // let s = '';
-            // for(let i = 0; i < snake.length; i++) {
-            //     s += '('
-            //     s += snake[i][0] + ', ' + snake[i][1] + '), ';
-            // }
-            // console.log(s);
-            if(dir != -1) {
-                updateSnake();
-            }
-            if(count < 2) {
-                growSnake();
-                count++;
-            }
-            
+    
             
             displayGrid();
         } else if(state == 0) {
             // play state
             // "Press any key to start" text should be gone, and game should be running
             // put game logic functions in here
+            if(dir != -1) {
+                updateSnake();
+            }
 
+            displayGrid();
+            if(dir === -1) {
+                state = 3; // special limbo state to avoid looping this section during the 5 second wait
+                pressToStart.innerHTML = 'You Lose!';
+                pressToStart.style.visibility = 'visible';
+                setTimeout(() => {
+                    resetGame();
+                    state = -1;
+                }, 5000)
+            }
         }
     }, 1000 / fps)
     
@@ -130,6 +134,10 @@ function drawRect(x, y, w, h, color="white") {
 function updateScore(s) {
     score = s;
     scoreEl.innerHTML = s;
+    if(score > highScore) {
+        highScore = score;
+        highScoreEl.innerHTML = highScore;
+    }
 }
 
 function initBoard() {
@@ -144,6 +152,7 @@ function initBoard() {
 function updateSnake() {
     let tailX = snake[snake.length - 1][0];
     let tailY = snake[snake.length - 1][1];
+    prevDir = dir;
     for(let i = snake.length - 1; i >= 0; i--) {
         
         if(i == 0) {
@@ -190,6 +199,12 @@ function updateSnake() {
                     dir = -1;
                 }
             }
+            // check if eating lecookie
+            if(dir !== -1 && grid[snake[0][0]][snake[0][1]] == 2) {
+                updateScore(score + 1);
+                growSnake();
+                placeCoin();
+            }
             // console.log('moving head to (' + snake[0][0] + ', ' + snake[0][1] + ')');
         } else {
             // snake body, change pos to i - 1 pos
@@ -217,6 +232,16 @@ function growSnake() {
     snake.push([snake[snake.length - 1][0], snake[snake.length - 1][1]]) // this might work
 }
 
+function placeCoin() {
+    let x = Math.floor(Math.random() * cols);
+    let y = Math.floor(Math.random() * rows);
+    while(grid[x][y] === 1) {
+        x = Math.floor(Math.random() * cols);
+        y = Math.floor(Math.random() * rows);
+    }
+    grid[x][y] = 2;
+}
+
 function displayGrid() {
     for(let i = 0; i < cols; i++) {
         for(let j = 0; j < rows; j++) {
@@ -231,14 +256,38 @@ function displayGrid() {
                     break;
                 case 2: 
                     // coin
+                    drawCircle((i * cellWidth) + (cellWidth / 2), (j * cellHeight) + (cellHeight / 2) + 50, cellWidth / 3, 'beige');
                     break;
             }
         }
     }
 }
 
-function resetGame() {
-    updateScore(0);
-    initBoard();
+function drawCircle(x, y, r, color) {
+    c.beginPath();
+    c.arc(x, y, r, 0, 2 * Math.PI);
+    c.fillStyle = color;
+    c.fill();
 }
 
+function resetGame() {
+    updateScore(0);
+    resetBoard();
+    pressToStart.innerHTML = 'Press any key to start';
+    resetSnake();
+    // pressToStart.style.visibility = 'visible';
+}
+
+function resetSnake() {
+    snake[0] = [center[0], center[1]];
+    snake[1] = [center[0] + 1, center[1]];
+    snake.splice(2);
+}
+
+function resetBoard() {
+    for(let i = 0; i < cols; i++) {
+        for(let j = 0; j < rows; j++) {
+            grid[i][j] = 0;
+        }
+    }
+}

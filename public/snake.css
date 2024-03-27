@@ -18,7 +18,7 @@ canvas {
 }
 
 #press-to-start {
-    visibility: hidden;
+    visibility: visible;
     color: white;
     position: absolute;
     top: 45%;
