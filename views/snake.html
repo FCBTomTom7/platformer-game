@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="snake.css">
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js" integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4" crossorigin="anonymous"></script>
     <script src="snake.js" defer></script>
     <title>Document</title>
 </head>
 <body>
     <h1 id="press-to-start">Press any key to start</h1>
     <div id="ui-bar">
-        <h1 id="score">0</h1>
-        <h1 id="high-score-title">HS: <span id="high-score">0</span></h1>
+        <div id="score-container">
+            <h1 id="score">0</h1>
+            <h1 id="high-score-title">HS: <span id="high-score">0</span></h1>
+        </div>
         <h1 id="snake-title">Snake Game</h1>
         <div id="menu-button">
             <div class="menu-bar"></div>

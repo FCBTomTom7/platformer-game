@@ -1,3 +1,5 @@
+let socket = io("http://localhost:3000");
+let username = window.location.search.split('?')[1]?.split('username=')[1] || null
 let canvas = document.getElementById('game-window');
 let c = canvas.getContext('2d');
 let width = canvas.width;
@@ -50,8 +52,17 @@ let score = 0;
 let highScore = 0; // we'll implement the db search for high score at some point
 
 
+// socket stuff to request hs from db
+socket.emit('requesting snake highscore', username);
+socket.on('snake highscore', hs => {
+    highScore = hs;
+    highScoreEl.innerHTML = highScore;
+})
 
-document.addEventListener('keypress', (e) => {
+
+
+
+document.addEventListener('keydown', (e) => {
     if(dir != -1) {
         switch(e.key) {
             case 'w':
@@ -109,7 +120,15 @@ function draw() {
             displayGrid();
             if(dir === -1) {
                 state = 3; // special limbo state to avoid looping this section during the 5 second wait
-                pressToStart.innerHTML = 'You Lose!';
+                if(score > highScore) {
+                    highScore = score;
+                    highScoreEl.innerHTML = highScore;
+                    pressToStart.innerHTML = 'New High Score!';
+                    socket.emit('update snake highscore', {username, highScore});
+                } else {
+                    pressToStart.innerHTML = 'You Lose!';
+                }
+                
                 pressToStart.style.visibility = 'visible';
                 setTimeout(() => {
                     resetGame();
@@ -134,10 +153,6 @@ function drawRect(x, y, w, h, color="white") {
 function updateScore(s) {
     score = s;
     scoreEl.innerHTML = s;
-    if(score > highScore) {
-        highScore = score;
-        highScoreEl.innerHTML = highScore;
-    }
 }
 
 function initBoard() {

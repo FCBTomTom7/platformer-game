@@ -172,6 +172,42 @@ io.on('connection', socket => {
         }) 
     })
 
+    socket.on('update snake highscore', ({username, highScore}) => {
+        userDataBase.findOne({username}).then(user => {
+            if(user) {
+                userDataBase.updateOne({username}, {$set: {
+                    snake: {
+                        highscore: highScore
+                    }
+                }}).then(d => {
+                    console.log('updated highscore of ' + user.username);
+                }).catch(err => {
+                    console.error(err);
+                })
+            } else {
+                console.log('user dont exist cuh');
+            }
+        }).catch(err => {
+            console.error(err);
+        })
+    })
+
+    socket.on('requesting snake highscore', username => {
+        userDataBase.findOne({username}).then(user => {
+            if(user) {
+                
+                if(user.snake) {
+                    console.log('sent highscore data to ' + username);
+                    socket.emit('snake highscore', user.snake.highscore);
+                }
+                
+            } else {
+                console.log('user doesnt exist, cannot send highscore for ' + username);
+            }
+        }).catch(err => {
+            console.error(err);
+        })
+    })
 })
 routes(app, userDataBase, io);
 auth(userDataBase);

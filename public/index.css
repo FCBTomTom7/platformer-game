@@ -3,12 +3,16 @@
     height: 188px;
     border: 1px solid black;
 } */
+body {
+    background: black;
+}
 
 h1 {
     width: 100%;
     text-align: center;
     position: fixed;
-    top: calc(50% - 350px);
+    top: calc(50% - 415px);
+    color: #F1EAF1;
 }
 
 img:hover {
