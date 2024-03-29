@@ -1,9 +1,17 @@
 let socket = io("http://localhost:3000");
+let backButton = document.getElementById('back-button');
 let username = window.location.search.split('?')[1]?.split('username=')[1] || null
 let canvas = document.getElementById('game-window');
 let c = canvas.getContext('2d');
 let width = canvas.width;
 let height = canvas.height;
+
+// back button functionality :)
+backButton.addEventListener('click', () => {
+    window.location.replace('http://localhost:3000/game-directory?username=' + username);
+})
+
+
 // remember the 50px buffer for the ui bar :)
 
 // ui bar line

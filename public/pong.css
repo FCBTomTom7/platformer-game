@@ -82,3 +82,30 @@ body {
 #right-counter {
     left: calc(100% - 100px);
 }
+
+#back-button {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    top: 50px;
+    left: 50px;
+    width: 150px;
+    height: 60px;
+    border: 1px solid white;
+}
+
+#game-directory-text {
+    color: white;
+    width: 100%;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+#back-button:hover {
+    background-color: white;
+}
+
+#back-button:hover #game-directory-text {
+    color: black;
+}

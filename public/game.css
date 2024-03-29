@@ -2,6 +2,7 @@
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+    user-select: none;
 }
 
 #game-screen {
@@ -43,4 +44,39 @@
     position: fixed;
     top: 40%;
     color: beige;
+}
+
+#back-button {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    top: 50px;
+    left: 50px;
+    width: 150px;
+    height: 60px;
+    z-index: 1;
+    box-shadow: 0 0 1px 2px rgb(30, 37, 41);
+    background-color: #2a4254
+}
+
+#game-directory-text {
+    color: rgb(213, 213, 213);
+    font-size: 1.2rem;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+}
+
+#back-button:hover {
+    background-color: #1f313f;
+    box-shadow: 0 0 1px 2px rgb(72, 92, 99);
+}
+
+#back-button:hover #game-directory-text {
+    /* color: rgb(108, 124, 119); */
+    color: rgb(215, 232, 229);
+}
+
+#back-button:active {
+    background-color: #14484a
 }

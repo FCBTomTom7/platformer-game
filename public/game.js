@@ -17,12 +17,20 @@ let startPos = screenHeight / 3;
 let curPos = startPos;
 let startOffset = 50;
 let canJump = false;
+let backButton = document.getElementById('back-button');
 let platforms = document.querySelectorAll('.platform')
 let player = document.getElementById('player');
 let scoreEl = document.getElementById('score');
 let topScoreEl = document.getElementById('top-score');
 let pressToStart = document.getElementById('press-to-start');
 let state = 0; 
+
+// back button functionality
+backButton.addEventListener('click', () => {
+    window.location.replace('http://localhost:3000/game-directory?username=' + user);
+})
+
+
 // console.log(screenHeight)
 addEventListener('resize', () => {
     screenWidth = window.innerWidth;

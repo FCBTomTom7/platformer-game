@@ -22,6 +22,7 @@ let gap = 35;
 let screenWidth = 800;
 let rightEdge = screenWidth + ((window.innerWidth - screenWidth) / 2);
 let leftEdge = (window.innerWidth - screenWidth) / 2;
+let backButton = document.getElementById('back-button');
 let player = document.getElementById('player');
 let opponent = document.getElementById('opponent');
 let puck = document.getElementById('puck')
@@ -34,6 +35,11 @@ let curPos = window.innerWidth / 2 - playerWidth / 2;
 let puckLeft = window.innerWidth / 2 - puckWidth / 2;
 let puckTop = window.innerHeight / 2 - puckHeight / 2;
 let oppPos = curPos;
+
+// back button functionality
+backButton.addEventListener('click', () => {
+    window.location.replace('http://localhost:3000/game-directory?username=' + user);
+})
 
 window.addEventListener('keydown', e => {
     if(e.key === 'ArrowLeft') {

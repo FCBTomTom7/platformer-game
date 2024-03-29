@@ -7,12 +7,15 @@ body {
     background: black;
 }
 
+#pick-game {
+    position: fixed;
+    top: calc(50% - 415px);    
+}
+
 h1 {
+    color: #F1EAF1;
     width: 100%;
     text-align: center;
-    position: fixed;
-    top: calc(50% - 415px);
-    color: #F1EAF1;
 }
 
 img:hover {

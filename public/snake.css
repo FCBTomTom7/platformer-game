@@ -84,3 +84,35 @@ canvas {
     position: relative;
     left: -10%;
 }
+
+#back-button {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    width: 150px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    background-color: #5b8b65;
+}
+
+#game-directory-text {
+    width: 100%;
+    text-align: center;
+    font-size: 1.2rem;
+    color: rgb(26, 25, 25);
+    font-weight: bold;
+}
+
+#back-button:hover {
+    background-color: #2a5444;
+    border: 1px solid white;
+}
+
+#back-button:hover #game-directory-text {
+    color: white;
+}
+
+#back-button:active {
+    background-color: rgb(36, 131, 123);
+}
